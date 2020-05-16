@@ -1,0 +1,33 @@
+{
+  "name": "@sentry/netlify-build-plugin",
+  "version": "1.0.0",
+  "description": "The Sentry Netlify build plugin automatically uploads source maps and notifies Sentry of new releases being deployed to your site after it finishes building in Netlify.",
+  "main": "index.js",
+  "keywords": [
+    "netlify",
+    "netlify-plugin",
+    "error-tracking",
+    "sentry"
+  ],
+  "files": [
+    "index.js",
+    "package.json",
+    "package-lock.json",
+    "README.md"
+  ],
+  "repository": "https://github.com/getsentry/sentry-netlify-build-plugin",
+  "bugs": {
+    "url": "https://github.com/getsentry/sentry-netlify-build-plugin/issues"
+  },
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@sentry/cli": "^1.52.3"
+  },
+  "engines": {
+    "node": ">=8.12.0"
+  },
+  "devDependencies": {
+    "netlify-cli": "^2.48.0",
+    "rimraf": "^3.0.2"
+  }
+}
