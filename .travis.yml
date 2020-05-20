@@ -1,0 +1,32 @@
+branches:
+  only:
+    - master
+    - /^release\/.+$/
+
+language: node_js
+
+cache:
+  yarn: true
+  directories:
+    - node_modules
+
+matrix:
+  include:
+    - name: 'deploy'
+      node_js: '10'
+      script:
+        - npm install
+        - npm pack
+      after_success:
+        - npm install -g @zeus-ci/cli
+        - zeus upload -t "application/tar+npm" *.tgz
+
+notifications:
+  webhooks:
+    urls:
+      - https://zeus.ci/hooks/d8d7b426-9af7-11ea-804e-c6b05a45f8b1/public/provider/travis/webhook
+    on_success: always
+    on_failure: always
+    on_start: always
+    on_cancel: always
+    on_error: always
