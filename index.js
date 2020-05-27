@@ -1,4 +1,4 @@
-/* 
+/*
   The Sentry Netlify build plugin:
     - Notifies Sentry of new releases being deployed.
     - Uploads source maps to Sentry.
@@ -31,6 +31,7 @@ module.exports = {
     const sentryEnvironment = process.env.SENTRY_ENVIRONMENT || process.env.CONTEXT
     const sourceMapPath = inputs.sourceMapPath || PUBLISH_DIR
     const sourceMapUrlPrefix = inputs.sourceMapUrlPrefix || DEFAULT_SOURCE_MAP_URL_PREFIX
+    const releasePrefix = process.env.SENTRY_RELEASE_PREFIX || (inputs.releasePrefix || '')
     const skipSetCommits = inputs.skipSetCommits || false
     const skipSourceMaps = inputs.skipSourceMaps || false
 
@@ -44,7 +45,8 @@ module.exports = {
         sourceMapPath,
         sourceMapUrlPrefix,
         skipSetCommits,
-        skipSourceMaps
+        skipSourceMaps,
+        releasePrefix
       })
 
       console.log()
@@ -56,13 +58,13 @@ module.exports = {
   }
 }
 
-async function sentryRelease({ sentryAuthToken, sentryEnvironment, sourceMapPath, sourceMapUrlPrefix, skipSetCommits, skipSourceMaps }) {
+async function sentryRelease({ sentryAuthToken, sentryEnvironment, sourceMapPath, sourceMapUrlPrefix, skipSetCommits, skipSourceMaps, releasePrefix }) {
   // default config file is read from ~/.sentryclirc
   if (!sentryAuthToken) {
     throw new Error('SentryCLI needs an authentication token. Please set env variable SENTRY_AUTH_TOKEN')
   }
 
-  const release = process.env.COMMIT_REF
+  const release = `${releasePrefix}${process.env.COMMIT_REF}`
   const cli = new SentryCli()
 
   console.log('Creating new release with version: ', release)
