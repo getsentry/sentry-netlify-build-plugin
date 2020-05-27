@@ -64,6 +64,7 @@ For more information about the parameters below, please see the [Sentry release 
 | `sourceMapUrlPrefix` | Prefix for the location of source maps. | `"~/"` |
 | `skipSetCommits` | Set this to true if you want to disable commit tracking. | `false` |
 | `skipSourceMaps` | Set this to true if you want to disable sending source maps to Sentry. | `false` |
+| `releasePrefix` | Set this to prefix the release name with the value. | - |
 
 #### Environment Variables
 
@@ -74,3 +75,4 @@ You can also use [site environment variables](https://docs.netlify.com/configure
 | `SENTRY_ORG` | The slug of the organization name in Sentry. | - |
 | `SENTRY_PROJECT` | The slug of the project name in Sentry. | - |
 | `SENTRY_ENVIRONMENT` | The name of the environment being deployed to. | Netlify [deploy context](https://docs.netlify.com/site-deploys/overview/#deploy-contexts) |
+| `SENTRY_RELEASE_PREFIX` | Set this to prefix the release name with the value. | - |

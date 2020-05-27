@@ -18,3 +18,5 @@ inputs:
   - name: skipSourceMaps
     description: Set this to true if you want to disable sending source maps to Sentry
     default: False
+  - name: releasePrefix
+    description: Set this to prefix the release name with the value.
