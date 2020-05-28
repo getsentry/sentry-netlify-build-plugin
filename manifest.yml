@@ -2,10 +2,8 @@ name: sentry-netlify-build-plugin
 inputs:
   - name: sentryOrg
     description: The slug of the organization name in Sentry
-    required: true
   - name: sentryProject
     description: The slug of the project name in Sentry
-    required: true
   - name: sentryAuthToken
     description: Authentication token for Sentry
   - name: sourceMapPath
