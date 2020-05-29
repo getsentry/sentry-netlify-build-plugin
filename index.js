@@ -89,7 +89,7 @@ async function sentryRelease({ pluginApi, sentryAuthToken, sentryEnvironment, so
 
   // https://docs.sentry.io/cli/releases/#sentry-cli-commit-integration
   if (!skipSetCommits) {
-    const repository = process.env.REPOSITORY_URL.split('/').slice(-2).join('/')
+    const repository = process.env.REPOSITORY_URL.split(/[:/]/).slice(-2).join('/')
     try {
       await cli.releases.setCommits(release, {
         repo: repository,
