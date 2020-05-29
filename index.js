@@ -35,10 +35,19 @@ module.exports = {
     const skipSourceMaps = inputs.skipSourceMaps || false
 
     if (RUNNING_IN_NETLIFY) {
+      if (!sentryAuthToken) {
+        return utils.build.failBuild('SentryCLI needs an authentication token. Please set env variable SENTRY_AUTH_TOKEN')
+      } else if (!sentryOrg) {
+        return utils.build.failBuild('SentryCLI needs the organization slug. Please set env variable SENTRY_ORG or set sentryOrg as a plugin input')
+      } else if (!sentryProject) {
+        return utils.build.failBuild('SentryCLI needs the project slug. Please set env variable SENTRY_PROJECT or set sentryProject as a plugin input')
+      }
+
       await createSentryConfig({ sentryOrg, sentryProject, sentryAuthToken })
 
       /* Notify Sentry of release being deployed on Netlify */
       await sentryRelease({
+        pluginApi,
         sentryAuthToken,
         sentryEnvironment,
         sourceMapPath,
@@ -56,12 +65,9 @@ module.exports = {
   }
 }
 
-async function sentryRelease({ sentryAuthToken, sentryEnvironment, sourceMapPath, sourceMapUrlPrefix, skipSetCommits, skipSourceMaps }) {
+async function sentryRelease({ pluginApi, sentryAuthToken, sentryEnvironment, sourceMapPath, sourceMapUrlPrefix, skipSetCommits, skipSourceMaps }) {
   // default config file is read from ~/.sentryclirc
-  if (!sentryAuthToken) {
-    throw new Error('SentryCLI needs an authentication token. Please set env variable SENTRY_AUTH_TOKEN')
-  }
-
+  const { constants, inputs, utils } = pluginApi
   const release = process.env.COMMIT_REF
   const cli = new SentryCli()
 
@@ -84,10 +90,18 @@ async function sentryRelease({ sentryAuthToken, sentryEnvironment, sourceMapPath
   // https://docs.sentry.io/cli/releases/#sentry-cli-commit-integration
   if (!skipSetCommits) {
     const repository = process.env.REPOSITORY_URL.split('/').slice(-2).join('/')
-    await cli.releases.setCommits(release, {
-      repo: repository,
-      commit: process.env.COMMIT_REF
-    })
+    try {
+      await cli.releases.setCommits(release, {
+        repo: repository,
+        commit: process.env.COMMIT_REF
+      })
+    } catch (error) {
+      console.log(error)
+      return utils.build.failBuild(
+        `SentryCLI failed to set commits. You likely need to set up a repository or repository integration. 
+         Read more: https://docs.sentry.io/workflow/releases/?platform=python#install-repo-integration`
+      )
+    }
   }
   // https://docs.sentry.io/cli/releases/#finalizing-releases
   await cli.releases.finalize(release)
