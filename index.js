@@ -31,7 +31,7 @@ module.exports = {
     const sentryEnvironment = process.env.SENTRY_ENVIRONMENT || process.env.CONTEXT
     const sourceMapPath = inputs.sourceMapPath || PUBLISH_DIR
     const sourceMapUrlPrefix = inputs.sourceMapUrlPrefix || DEFAULT_SOURCE_MAP_URL_PREFIX
-    const releasePrefix = process.env.SENTRY_RELEASE_PREFIX || (inputs.releasePrefix || '')
+    const releasePrefix = inputs.releasePrefix || process.env.SENTRY_RELEASE_PREFIX || ''
     const skipSetCommits = inputs.skipSetCommits || false
     const skipSourceMaps = inputs.skipSourceMaps || false
 
