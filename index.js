@@ -28,6 +28,8 @@ module.exports = {
     const sentryOrg = process.env.SENTRY_ORG || inputs.sentryOrg
     const sentryProject = process.env.SENTRY_PROJECT || inputs.sentryProject
     const sentryAuthToken = process.env.SENTRY_AUTH_TOKEN || inputs.sentryAuthToken
+    const sentryRelease = process.env.SENTRY_RELEASE || inputs.sentryRelease || process.env.COMMIT_REF
+    const releasePrefix = process.env.SENTRY_RELEASE_PREFIX || inputs.releasePrefix || ''
     const sentryEnvironment = process.env.SENTRY_ENVIRONMENT || process.env.CONTEXT
     const sourceMapPath = inputs.sourceMapPath || PUBLISH_DIR
     const sourceMapUrlPrefix = inputs.sourceMapUrlPrefix || DEFAULT_SOURCE_MAP_URL_PREFIX
@@ -45,10 +47,13 @@ module.exports = {
 
       await createSentryConfig({ sentryOrg, sentryProject, sentryAuthToken })
 
+      /* Apply release prefix */
+      const release = `${releasePrefix}${sentryRelease}`
+
       /* Notify Sentry of release being deployed on Netlify */
-      await sentryRelease({
+      await createSentryRelease({
         pluginApi,
-        sentryAuthToken,
+        release,
         sentryEnvironment,
         sourceMapPath,
         sourceMapUrlPrefix,
@@ -65,10 +70,9 @@ module.exports = {
   }
 }
 
-async function sentryRelease({ pluginApi, sentryAuthToken, sentryEnvironment, sourceMapPath, sourceMapUrlPrefix, skipSetCommits, skipSourceMaps }) {
+async function createSentryRelease({ pluginApi, release, sentryEnvironment, sourceMapPath, sourceMapUrlPrefix, skipSetCommits, skipSourceMaps }) {
   // default config file is read from ~/.sentryclirc
   const { constants, inputs, utils } = pluginApi
-  const release = process.env.COMMIT_REF
   const cli = new SentryCli()
 
   console.log('Creating new release with version: ', release)
