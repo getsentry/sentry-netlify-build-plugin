@@ -6,6 +6,8 @@ inputs:
     description: The slug of the project name in Sentry
   - name: sentryAuthToken
     description: Authentication token for Sentry
+  - name: sentryRelease
+    description: The release ID (a.k.a version)
   - name: sourceMapPath
     description: Folder in which to scan for source maps to upload
   - name: sourceMapUrlPrefix
@@ -16,3 +18,5 @@ inputs:
   - name: skipSourceMaps
     description: Set this to true if you want to disable sending source maps to Sentry
     default: False
+  - name: releasePrefix
+    description: Set this to prefix the release name with the value.
