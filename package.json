@@ -1,6 +1,6 @@
 {
   "name": "@sentry/netlify-build-plugin",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "The Sentry Netlify build plugin automatically uploads source maps and notifies Sentry of new releases being deployed to your site after it finishes building in Netlify.",
   "main": "index.js",
   "keywords": [
