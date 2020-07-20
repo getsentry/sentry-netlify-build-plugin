@@ -34,7 +34,7 @@ Note: The `[[plugins]]` line is required for each plugin installed via file-base
 ### Create a Sentry Internal Integration
 For Netlify to communicate securely with Sentry, you'll need to create a new internal integration. In Sentry, navigate to: *Settings > Developer Settings > New Internal Integration*.
 
-Give your new integration a name (for example, Netlify Deploy Integration”) and specify the necessary permissions. In this case, we need Admin access for “Release” and Read access for “Organization”.
+Give your new integration a name (for example, “Netlify Deploy Integration”) and specify the necessary permissions. In this case, we need Admin access for “Release” and Read access for “Organization”.
 
 ![View of internal integration permissions.](images/internal-integration-permissions.png)
 
