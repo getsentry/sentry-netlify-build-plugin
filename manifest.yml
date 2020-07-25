@@ -20,3 +20,6 @@ inputs:
     default: False
   - name: releasePrefix
     description: Set this to prefix the release name with the value.
+  - name: deployPreviews
+    description: Set this to false if you want to skip running the build plugin on deploy previews.
+    default: True

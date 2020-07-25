@@ -80,3 +80,4 @@ You can use [site environment variables](https://docs.netlify.com/configure-buil
 | `skipSetCommits` | Set this to true if you want to disable commit tracking. | `false` |
 | `skipSourceMaps` | Set this to true if you want to disable sending source maps to Sentry. | `false` |
 | `releasePrefix` | Set this to prefix the release name with the value. | - |
+| `deployPreviews` | Set this to false if you want to skip running the build plugin on deploy previews. | `true` |
