@@ -81,7 +81,18 @@ async function createSentryRelease({ pluginApi, release, sentryEnvironment, sour
   console.log('Creating new release with version: ', release)
 
   // https://docs.sentry.io/cli/releases/#creating-releases
-  await cli.releases.new(release)
+  try {
+    await cli.releases.new(release)
+  } catch (error) {
+    if (error.message.includes("401")) {
+      return utils.build.failBuild("SentryCLI failed to create a new release. Invalid Sentry authentication token. (http status: 401)")
+    } else if (error.message.includes("403")) {
+      return utils.build.failBuild("SentryCLI failed to create a new release. You do not have permission to perform this action. (http status: 403)")
+    } else {
+      console.log(error)
+      return utils.build.failBuild("SentryCLI failed to create a new release.")
+    }
+  }
 
   // https://docs.sentry.io/cli/releases/#managing-release-artifacts
   if (!inputs.skipSourceMaps) {
