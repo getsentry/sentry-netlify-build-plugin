@@ -23,4 +23,4 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GH_RELEASE_PAT }}
         with:
           version: ${{ github.event.inputs.version }}
-          force: ${{ github.event.inputs.force
+          force: ${{ github.event.inputs.force }}
