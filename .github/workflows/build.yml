@@ -1,0 +1,33 @@
+name: Build
+on:
+  push:
+    branches:
+      - master
+      - release/**
+  pull_request:
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+      - uses: actions/cache@v2
+        id: cache-deps
+        with:
+          path: |
+            **/node_modules
+          key: ${{ hashFiles('**/package-lock.json') }}
+      - name: Install
+        if: steps.cache-deps.outputs.cache-hit != 'true'
+        run: npm ci
+      - name: Pack
+        run: npm pack
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ github.sha }}
+          path: |
+            **/*.tgz
