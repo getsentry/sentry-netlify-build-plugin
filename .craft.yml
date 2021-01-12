@@ -1,10 +1,9 @@
 ---
-minVersion: "0.14.0"
+minVersion: "0.15.0"
 github:
   owner: getsentry
   repo: sentry-netlify-build-plugin
 changelogPolicy: none
-preReleaseCommand: bash scripts/craft-pre-release.sh
 statusProvider:
   name: github
 artifactProvider:
