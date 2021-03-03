@@ -27,7 +27,7 @@ module.exports = {
     const IS_PREVIEW = process.env.CONTEXT == 'deploy-preview'
 
     /* Set the user input settings */
-    const sentryUrl = process.env.SENTRY_URL || inputs.sentryUrl || "https://sentry.io/";
+    const sentryUrl = process.env.SENTRY_URL || inputs.sentryUrl;
     const sentryOrg = process.env.SENTRY_ORG || inputs.sentryOrg
     const sentryProject = process.env.SENTRY_PROJECT || inputs.sentryProject
     const sentryAuthToken = process.env.SENTRY_AUTH_TOKEN || inputs.sentryAuthToken
@@ -134,7 +134,7 @@ async function createSentryConfig({ sentryOrg, sentryProject, sentryAuthToken, s
   [auth]
   token=${sentryAuthToken}
   [defaults]
-  url=${sentryUrl}
+  ${sentryUrl ? `url=${sentryUrl}` : ''}
   project=${sentryProject}
   org=${sentryOrg}
   pipeline=netlify-build-plugin/${version}
