@@ -27,6 +27,7 @@ module.exports = {
     const IS_PREVIEW = process.env.CONTEXT == 'deploy-preview'
 
     /* Set the user input settings */
+    const sentryUrl = process.env.SENTRY_URL || inputs.sentryUrl;
     const sentryOrg = process.env.SENTRY_ORG || inputs.sentryOrg
     const sentryProject = process.env.SENTRY_PROJECT || inputs.sentryProject
     const sentryAuthToken = process.env.SENTRY_AUTH_TOKEN || inputs.sentryAuthToken
@@ -50,7 +51,7 @@ module.exports = {
         return utils.build.failBuild('SentryCLI needs the project slug. Please set env variable SENTRY_PROJECT or set sentryProject as a plugin input')
       }
 
-      await createSentryConfig({ sentryOrg, sentryProject, sentryAuthToken })
+      await createSentryConfig({ sentryOrg, sentryProject, sentryAuthToken, sentryUrl })
 
       /* Apply release prefix */
       const release = `${releasePrefix}${sentryRelease}`
@@ -128,11 +129,12 @@ async function createSentryRelease({ pluginApi, release, sentryEnvironment, sour
   await cli.releases.execute(['releases', 'deploys', release, 'new', '-e', sentryEnvironment])
 }
 
-async function createSentryConfig({ sentryOrg, sentryProject, sentryAuthToken }) {
+async function createSentryConfig({ sentryOrg, sentryProject, sentryAuthToken, sentryUrl }) {
   const sentryConfigFile = `
   [auth]
   token=${sentryAuthToken}
   [defaults]
+  ${sentryUrl ? `url=${sentryUrl}` : ''}
   project=${sentryProject}
   org=${sentryOrg}
   pipeline=netlify-build-plugin/${version}
