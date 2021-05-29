@@ -52,8 +52,6 @@ Save the internal integration token and any other environment variables as [site
 
 ![View of internal integration permissions.](images/netlify-environment-variables.png)
 
-The repository must  
-
 For more information about the parameters below, please see the [Sentry release management docs](https://docs.sentry.io/cli/releases/).
 
 ### Ensure Your SDK is Configured
