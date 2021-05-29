@@ -34,6 +34,7 @@ module.exports = {
     const sentryRelease = process.env.SENTRY_RELEASE || inputs.sentryRelease || process.env.COMMIT_REF
     const releasePrefix = process.env.SENTRY_RELEASE_PREFIX || inputs.releasePrefix || ''
     const sentryEnvironment = process.env.SENTRY_ENVIRONMENT || process.env.CONTEXT
+    const sentryRepository = process.env.SENTRY_REPOSITORY || inputs.sentryRepository
     const sourceMapPath = inputs.sourceMapPath || PUBLISH_DIR
     const sourceMapUrlPrefix = inputs.sourceMapUrlPrefix || DEFAULT_SOURCE_MAP_URL_PREFIX
 
@@ -108,7 +109,7 @@ async function createSentryRelease({ pluginApi, release, sentryEnvironment, sour
 
   // https://docs.sentry.io/cli/releases/#sentry-cli-commit-integration
   if (!inputs.skipSetCommits) {
-    const repository = process.env.REPOSITORY_URL.split(/[:/]/).slice(-2).join('/')
+    const repository = sentryRepository || process.env.REPOSITORY_URL.split(/[:/]/).slice(-2).join('/')
     try {
       await cli.releases.setCommits(release, {
         repo: repository,
