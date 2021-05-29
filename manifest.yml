@@ -8,6 +8,8 @@ inputs:
     description: Authentication token for Sentry
   - name: sentryRelease
     description: The release ID (a.k.a version)
+  - name: sentryRepository
+    description: Override the name of the target Sentry repository
   - name: sourceMapPath
     description: Folder in which to scan for source maps to upload
   - name: sourceMapUrlPrefix
