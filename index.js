@@ -62,6 +62,7 @@ module.exports = {
         pluginApi,
         release,
         sentryEnvironment,
+        sentryRepository,
         sourceMapPath,
         sourceMapUrlPrefix
       })
@@ -75,7 +76,7 @@ module.exports = {
   }
 }
 
-async function createSentryRelease({ pluginApi, release, sentryEnvironment, sourceMapPath, sourceMapUrlPrefix }) {
+async function createSentryRelease({ pluginApi, release, sentryEnvironment, sentryRepository, sourceMapPath, sourceMapUrlPrefix }) {
   // default config file is read from ~/.sentryclirc
   const { constants, inputs, utils } = pluginApi
   const cli = new SentryCli()
