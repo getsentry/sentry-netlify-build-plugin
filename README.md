@@ -9,6 +9,8 @@ The Sentry Netlify build plugin:
 
 Before proceeding, you'll first want to ensure that your Sentry project is set up properly to track commit metadata. The easiest way to do that is to [install a repository integration](https://docs.sentry.io/product/releases/#install-repo-integration).
 
+By default, the linked Sentry repository will be parsed from the Netlify's `REPOSITORY_URL` environment variable. This behaviour can be overridden using the `SENTRY_REPOSITORY` environment variable.
+
 Make sure build plugins are enabled on your site to see the plugin run.
 
 ## Installation
@@ -50,6 +52,8 @@ Save the internal integration token and any other environment variables as [site
 
 ![View of internal integration permissions.](images/netlify-environment-variables.png)
 
+The repository must  
+
 For more information about the parameters below, please see the [Sentry release management docs](https://docs.sentry.io/cli/releases/).
 
 ### Ensure Your SDK is Configured
@@ -64,6 +68,7 @@ You can use [site environment variables](https://docs.netlify.com/configure-buil
 | `SENTRY_ORG` | The slug of the organization name in Sentry. | - |
 | `SENTRY_PROJECT` | The slug of the project name in Sentry. | - |
 | `SENTRY_RELEASE` | The release ID (a.k.a version). | [COMMIT_REF](https://docs.netlify.com/configure-builds/environment-variables/#git-metadata) |
+| `SENTRY_REPOSITORY` | Override the name of the target Sentry repository. | - |
 | `SENTRY_ENVIRONMENT` | The name of the environment being deployed to. | Netlify [deploy context](https://docs.netlify.com/site-deploys/overview/#deploy-contexts) |
 | `SENTRY_RELEASE_PREFIX` | Set this to prefix the release name with the value. | - |
 
@@ -75,6 +80,7 @@ You can use [site environment variables](https://docs.netlify.com/configure-buil
 | `sentryProject` | The slug of the project name in Sentry. | - |
 | `sentryAuthToken` | Authentication token for Sentry. We recommend this be set as an environment variable (see below). | - |
 | `sentryRelease` | The release ID (a.k.a version). | [COMMIT_REF](https://docs.netlify.com/configure-builds/environment-variables/#git-metadata) |
+| `sentryRepository` | Override the name of the target Sentry repository. | - |
 | `sourceMapPath` | Folder in which to scan for source maps to upload. | Netlify publish directory |
 | `sourceMapUrlPrefix` | Prefix for the location of source maps. | `"~/"` |
 | `skipSetCommits` | Set this to true if you want to disable commit tracking. | `false` |
