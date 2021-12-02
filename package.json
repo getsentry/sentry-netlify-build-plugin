@@ -22,7 +22,8 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "@sentry/cli": "^1.52.3"
+    "@sentry/cli": "^1.52.3",
+    "node-glob": "^1.2.0"
   },
   "engines": {
     "node": ">=8.12.0"

@@ -1,4 +1,4 @@
-/* 
+/*
   The Sentry Netlify build plugin:
     - Notifies Sentry of new releases being deployed.
     - Uploads source maps to Sentry.
@@ -8,8 +8,8 @@
 const fs = require('fs')
 const path = require('path')
 const SentryCli = require('@sentry/cli')
-const { promisify, inspect } = require('util')
-const { version } = require('./package.json');
+const {promisify, inspect} = require('util')
+const {version} = require('./package.json');
 
 const writeFile = promisify(fs.writeFile)
 const deleteFile = promisify(fs.unlink)
@@ -17,11 +17,12 @@ const deleteFile = promisify(fs.unlink)
 const CWD = path.resolve(process.cwd())
 const SENTRY_CONFIG_PATH = path.resolve(CWD, '.sentryclirc')
 const DEFAULT_SOURCE_MAP_URL_PREFIX = "~/"
+const DEFAULT_DELETE_SOURCE_MAPS = false
 
 module.exports = {
   onPostBuild: async (pluginApi) => {
-    const { constants, inputs, utils } = pluginApi
-    const { PUBLISH_DIR, IS_LOCAL } = constants
+    const {constants, inputs, utils} = pluginApi
+    const {PUBLISH_DIR, IS_LOCAL} = constants
 
     const RUNNING_IN_NETLIFY = !IS_LOCAL
     const IS_PREVIEW = process.env.CONTEXT == 'deploy-preview'
@@ -36,6 +37,7 @@ module.exports = {
     const sentryEnvironment = process.env.SENTRY_ENVIRONMENT || process.env.CONTEXT
     const sourceMapPath = inputs.sourceMapPath || PUBLISH_DIR
     const sourceMapUrlPrefix = inputs.sourceMapUrlPrefix || DEFAULT_SOURCE_MAP_URL_PREFIX
+    const shouldDeleteSourceMaps = process.env.SENTRY_DELETE_SOURCE_MAPS || inputs.sentryDeleteSourceMaps || DEFAULT_DELETE_SOURCE_MAPS
 
     if (RUNNING_IN_NETLIFY) {
       if (IS_PREVIEW && !inputs.deployPreviews) {
@@ -51,7 +53,7 @@ module.exports = {
         return utils.build.failBuild('SentryCLI needs the project slug. Please set env variable SENTRY_PROJECT or set sentryProject as a plugin input')
       }
 
-      await createSentryConfig({ sentryOrg, sentryProject, sentryAuthToken, sentryUrl })
+      await createSentryConfig({sentryOrg, sentryProject, sentryAuthToken, sentryUrl})
 
       /* Apply release prefix */
       const release = `${releasePrefix}${sentryRelease}`
@@ -70,13 +72,31 @@ module.exports = {
       console.log()
 
       await deleteSentryConfig()
+
+      if (!shouldDeleteSourceMaps) {
+        console.log('Source map files retained.')
+      } else {
+        console.log('Removing source map files.')
+        await new Promise(resolve => {
+          const glob = require('glob');
+          glob(`${sourceMapPath}/**/*.map`, (er, files) => {
+            if (!er && files) {
+              Promise
+                .all(files
+                  .map(file => deleteFile(file)))
+                .catch(e => console.log('error deleting source map files', e))
+                .finally(() => resolve(true));
+            }
+          })
+        })
+      }
     }
   }
 }
 
-async function createSentryRelease({ pluginApi, release, sentryEnvironment, sourceMapPath, sourceMapUrlPrefix }) {
+async function createSentryRelease({pluginApi, release, sentryEnvironment, sourceMapPath, sourceMapUrlPrefix}) {
   // default config file is read from ~/.sentryclirc
-  const { constants, inputs, utils } = pluginApi
+  const {constants, inputs, utils} = pluginApi
   const cli = new SentryCli()
 
   console.log('Creating new release with version: ', release)
@@ -129,7 +149,7 @@ async function createSentryRelease({ pluginApi, release, sentryEnvironment, sour
   await cli.releases.execute(['releases', 'deploys', release, 'new', '-e', sentryEnvironment])
 }
 
-async function createSentryConfig({ sentryOrg, sentryProject, sentryAuthToken, sentryUrl }) {
+async function createSentryConfig({sentryOrg, sentryProject, sentryAuthToken, sentryUrl}) {
   const sentryConfigFile = `
   [auth]
   token=${sentryAuthToken}
@@ -139,7 +159,7 @@ async function createSentryConfig({ sentryOrg, sentryProject, sentryAuthToken, s
   org=${sentryOrg}
   pipeline=netlify-build-plugin/${version}
   `
-  await writeFile(SENTRY_CONFIG_PATH, sentryConfigFile, { flag: 'w+' })
+  await writeFile(SENTRY_CONFIG_PATH, sentryConfigFile, {flag: 'w+'})
 }
 
 async function deleteSentryConfig() {
@@ -148,5 +168,5 @@ async function deleteSentryConfig() {
 
 function fileExists(s) {
   // eslint-disable-next-line
-  return new Promise( r => fs.access(s, fs.F_OK, e => r(!e)))
+  return new Promise(r => fs.access(s, fs.F_OK, e => r(!e)))
 }
