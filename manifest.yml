@@ -23,3 +23,6 @@ inputs:
   - name: deployPreviews
     description: Set this to false if you want to skip running the build plugin on deploy previews.
     default: True
+  - name: sentryDeleteSourceMaps
+    description: Set this to true if you to delete sourcemaps after they have been sent to Sentry.
+    default: False
