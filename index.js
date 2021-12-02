@@ -1,4 +1,4 @@
-/*
+/* 
   The Sentry Netlify build plugin:
     - Notifies Sentry of new releases being deployed.
     - Uploads source maps to Sentry.
@@ -8,8 +8,8 @@
 const fs = require('fs')
 const path = require('path')
 const SentryCli = require('@sentry/cli')
-const {promisify, inspect} = require('util')
-const {version} = require('./package.json');
+const { promisify, inspect } = require('util')
+const { version } = require('./package.json');
 
 const writeFile = promisify(fs.writeFile)
 const deleteFile = promisify(fs.unlink)
@@ -21,8 +21,8 @@ const DEFAULT_DELETE_SOURCE_MAPS = false
 
 module.exports = {
   onPostBuild: async (pluginApi) => {
-    const {constants, inputs, utils} = pluginApi
-    const {PUBLISH_DIR, IS_LOCAL} = constants
+    const { constants, inputs, utils } = pluginApi
+    const { PUBLISH_DIR, IS_LOCAL } = constants
 
     const RUNNING_IN_NETLIFY = !IS_LOCAL
     const IS_PREVIEW = process.env.CONTEXT == 'deploy-preview'
@@ -53,7 +53,7 @@ module.exports = {
         return utils.build.failBuild('SentryCLI needs the project slug. Please set env variable SENTRY_PROJECT or set sentryProject as a plugin input')
       }
 
-      await createSentryConfig({sentryOrg, sentryProject, sentryAuthToken, sentryUrl})
+      await createSentryConfig({ sentryOrg, sentryProject, sentryAuthToken, sentryUrl })
 
       /* Apply release prefix */
       const release = `${releasePrefix}${sentryRelease}`
@@ -94,9 +94,9 @@ module.exports = {
   }
 }
 
-async function createSentryRelease({pluginApi, release, sentryEnvironment, sourceMapPath, sourceMapUrlPrefix}) {
+async function createSentryRelease({ pluginApi, release, sentryEnvironment, sourceMapPath, sourceMapUrlPrefix }) {
   // default config file is read from ~/.sentryclirc
-  const {constants, inputs, utils} = pluginApi
+  const { constants, inputs, utils } = pluginApi
   const cli = new SentryCli()
 
   console.log('Creating new release with version: ', release)
@@ -149,7 +149,7 @@ async function createSentryRelease({pluginApi, release, sentryEnvironment, sourc
   await cli.releases.execute(['releases', 'deploys', release, 'new', '-e', sentryEnvironment])
 }
 
-async function createSentryConfig({sentryOrg, sentryProject, sentryAuthToken, sentryUrl}) {
+async function createSentryConfig({ sentryOrg, sentryProject, sentryAuthToken, sentryUrl }) {
   const sentryConfigFile = `
   [auth]
   token=${sentryAuthToken}
@@ -159,7 +159,7 @@ async function createSentryConfig({sentryOrg, sentryProject, sentryAuthToken, se
   org=${sentryOrg}
   pipeline=netlify-build-plugin/${version}
   `
-  await writeFile(SENTRY_CONFIG_PATH, sentryConfigFile, {flag: 'w+'})
+  await writeFile(SENTRY_CONFIG_PATH, sentryConfigFile, { flag: 'w+' })
 }
 
 async function deleteSentryConfig() {
@@ -168,5 +168,5 @@ async function deleteSentryConfig() {
 
 function fileExists(s) {
   // eslint-disable-next-line
-  return new Promise(r => fs.access(s, fs.F_OK, e => r(!e)))
+  return new Promise( r => fs.access(s, fs.F_OK, e => r(!e)))
 }
