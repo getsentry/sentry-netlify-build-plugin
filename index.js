@@ -86,6 +86,9 @@ module.exports = {
                   .map(file => deleteFile(file)))
                 .catch(e => console.log('error deleting source map files', e))
                 .finally(() => resolve(true));
+            } else {
+              console.log('could not find source map files', er);
+              resolve(false);
             }
           })
         })
