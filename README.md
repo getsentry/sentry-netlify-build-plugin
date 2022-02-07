@@ -60,28 +60,28 @@ To link errors with releases, you must include a release ID (a.k.a version) wher
 #### Environment Variables
 
 You can use [site environment variables](https://docs.netlify.com/configure-builds/environment-variables/) to configure these values:
-| name | description | default |
-|------|-------------|---------|
-| `SENTRY_AUTH_TOKEN` | Authentication token for Sentry. | - |
-| `SENTRY_ORG` | The slug of the organization name in Sentry. | - |
-| `SENTRY_PROJECT` | The slug of the project name in Sentry. | - |
-| `SENTRY_RELEASE` | The release ID (a.k.a version). | [COMMIT_REF](https://docs.netlify.com/configure-builds/environment-variables/#git-metadata) |
-| `SENTRY_REPOSITORY` | Override the name of the target Sentry repository. | - |
-| `SENTRY_ENVIRONMENT` | The name of the environment being deployed to. | Netlify [deploy context](https://docs.netlify.com/site-deploys/overview/#deploy-contexts) |
-| `SENTRY_RELEASE_PREFIX` | Set this to prefix the release name with the value. | - |
+| name                    | description                                         | default                                                                                     |
+| ----------------------- | --------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| `SENTRY_AUTH_TOKEN`     | Authentication token for Sentry.                    | -                                                                                           |
+| `SENTRY_ORG`            | The slug of the organization name in Sentry.        | -                                                                                           |
+| `SENTRY_PROJECT`        | The slug of the project name in Sentry.             | -                                                                                           |
+| `SENTRY_RELEASE`        | The release ID (a.k.a version).                     | [COMMIT_REF](https://docs.netlify.com/configure-builds/environment-variables/#git-metadata) |
+| `SENTRY_REPOSITORY`     | The name of the target Sentry repository.           | -                                                                                           |
+| `SENTRY_ENVIRONMENT`    | The name of the environment being deployed to.      | Netlify [deploy context](https://docs.netlify.com/site-deploys/overview/#deploy-contexts)   |
+| `SENTRY_RELEASE_PREFIX` | Set this to prefix the release name with the value. | -                                                                                           |
 
 
 #### Plugin Inputs
-| name | description | default |
-|------|-------------|---------|
-| `sentryOrg` | The slug of the organization name in Sentry. | - |
-| `sentryProject` | The slug of the project name in Sentry. | - |
-| `sentryAuthToken` | Authentication token for Sentry. We recommend this be set as an environment variable (see below). | - |
-| `sentryRelease` | The release ID (a.k.a version). | [COMMIT_REF](https://docs.netlify.com/configure-builds/environment-variables/#git-metadata) |
-| `sentryRepository` | Override the name of the target Sentry repository. | - |
-| `sourceMapPath` | Folder in which to scan for source maps to upload. | Netlify publish directory |
-| `sourceMapUrlPrefix` | Prefix for the location of source maps. | `"~/"` |
-| `skipSetCommits` | Set this to true if you want to disable commit tracking. | `false` |
-| `skipSourceMaps` | Set this to true if you want to disable sending source maps to Sentry. | `false` |
-| `releasePrefix` | Set this to prefix the release name with the value. | - |
-| `deployPreviews` | Set this to false if you want to skip running the build plugin on deploy previews. | `true` |
+| name                 | description                                                                                       | default                                                                                                      |
+| -------------------- | ------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| `sentryOrg`          | The slug of the organization name in Sentry.                                                      | -                                                                                                            |
+| `sentryProject`      | The slug of the project name in Sentry.                                                           | -                                                                                                            |
+| `sentryAuthToken`    | Authentication token for Sentry. We recommend this be set as an environment variable (see below). | -                                                                                                            |
+| `sentryRelease`      | The release ID (a.k.a version).                                                                   | [COMMIT_REF](https://docs.netlify.com/configure-builds/environment-variables/#git-metadata)                  |
+| `sentryRepository`   | The name of the target Sentry repository.                                                         | Derived from [REPOSITORY_URL](https://docs.netlify.com/configure-builds/environment-variables/#git-metadata) |
+| `sourceMapPath`      | Folder in which to scan for source maps to upload.                                                | Netlify publish directory                                                                                    |
+| `sourceMapUrlPrefix` | Prefix for the location of source maps.                                                           | `"~/"`                                                                                                       |
+| `skipSetCommits`     | Set this to true if you want to disable commit tracking.                                          | `false`                                                                                                      |
+| `skipSourceMaps`     | Set this to true if you want to disable sending source maps to Sentry.                            | `false`                                                                                                      |
+| `releasePrefix`      | Set this to prefix the release name with the value.                                               | -                                                                                                            |
+| `deployPreviews`     | Set this to false if you want to skip running the build plugin on deploy previews.                | `true`                                                                                                       |
