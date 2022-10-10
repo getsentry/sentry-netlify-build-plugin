@@ -10,6 +10,7 @@ const path = require('path')
 const SentryCli = require('@sentry/cli')
 const { promisify, inspect } = require('util')
 const { version } = require('./package.json')
+const glob = require("glob");
 
 const writeFile = promisify(fs.writeFile)
 const deleteFile = promisify(fs.unlink)
