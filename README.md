@@ -85,5 +85,5 @@ You can use [site environment variables](https://docs.netlify.com/configure-buil
 | `skipSourceMaps`     | Set this to true if you want to disable sending source maps to Sentry.                            | `false`                                                                                                      |
 | `releasePrefix`      | Set this to prefix the release name with the value.                                               | -                                                                                                            |
 | `deployPreviews`     | Set this to false if you want to skip running the build plugin on deploy previews.                | `true`                                                                                                       |
-| `sentryDeleteSourceMaps` | Set this to true if you want to delete sourcemaps after they have been sent to Sentry.        | `false`                                                                                                      |
+| `deleteSourceMaps` | Set this to true if you want to delete sourcemaps after they have been sent to Sentry.        | `false`                                                                                                      |
 

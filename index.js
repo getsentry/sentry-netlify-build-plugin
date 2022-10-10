@@ -9,7 +9,7 @@ const fs = require('fs')
 const path = require('path')
 const SentryCli = require('@sentry/cli')
 const { promisify, inspect } = require('util')
-const { version } = require('./package.json');
+const { version } = require('./package.json')
 
 const writeFile = promisify(fs.writeFile)
 const deleteFile = promisify(fs.unlink)
@@ -17,7 +17,6 @@ const deleteFile = promisify(fs.unlink)
 const CWD = path.resolve(process.cwd())
 const SENTRY_CONFIG_PATH = path.resolve(CWD, '.sentryclirc')
 const DEFAULT_SOURCE_MAP_URL_PREFIX = "~/"
-const DEFAULT_DELETE_SOURCE_MAPS = false
 
 module.exports = {
   onPostBuild: async (pluginApi) => {
@@ -28,7 +27,7 @@ module.exports = {
     const IS_PREVIEW = process.env.CONTEXT == 'deploy-preview'
 
     /* Set the user input settings */
-    const sentryUrl = process.env.SENTRY_URL || inputs.sentryUrl;
+    const sentryUrl = process.env.SENTRY_URL || inputs.sentryUrl
     const sentryOrg = process.env.SENTRY_ORG || inputs.sentryOrg
     const sentryProject = process.env.SENTRY_PROJECT || inputs.sentryProject
     const sentryAuthToken = process.env.SENTRY_AUTH_TOKEN || inputs.sentryAuthToken
@@ -38,7 +37,6 @@ module.exports = {
     const sentryRepository = process.env.SENTRY_REPOSITORY || inputs.sentryRepository
     const sourceMapPath = inputs.sourceMapPath || PUBLISH_DIR
     const sourceMapUrlPrefix = inputs.sourceMapUrlPrefix || DEFAULT_SOURCE_MAP_URL_PREFIX
-    const shouldDeleteSourceMaps = process.env.SENTRY_DELETE_SOURCE_MAPS || inputs.sentryDeleteSourceMaps || DEFAULT_DELETE_SOURCE_MAPS
 
     if (RUNNING_IN_NETLIFY) {
       if (IS_PREVIEW && !inputs.deployPreviews) {
@@ -75,25 +73,14 @@ module.exports = {
 
       await deleteSentryConfig()
 
-      if (!shouldDeleteSourceMaps) {
-        console.log('Source map files retained.')
-      } else {
-        console.log('Removing source map files.')
-        await new Promise(resolve => {
-          const glob = require('glob');
-          glob(`${sourceMapPath}/**/*.map`, (er, files) => {
-            if (!er && files) {
-              Promise
-                .all(files
-                  .map(file => deleteFile(file)))
-                .catch(e => console.log('error deleting source map files', e))
-                .finally(() => resolve(true));
-            } else {
-              console.log('could not find source map files', er);
-              resolve(false);
-            }
-          })
-        })
+      if (inputs.deleteSourceMaps) {
+        console.log("Removing source map files.")
+        const files = glob.sync(`${sourceMapPath}/**/*.map`)
+        const deleteFileErrorHandler = (e) => console.log("Error deleting source map file:", e)
+        const deleteFilePromises = files.map((file) =>
+          deleteFile(file).catch(deleteFileErrorHandler)
+        )
+        await Promise.all(deleteFilePromises)
       }
     }
   }
