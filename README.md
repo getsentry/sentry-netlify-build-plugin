@@ -73,7 +73,7 @@ You can use [site environment variables](https://docs.netlify.com/configure-buil
 
 #### Plugin Inputs
 | name                 | description                                                                                       | default                                                                                                      |
-| -------------------- | ------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+|----------------------|---------------------------------------------------------------------------------------------------| ------------------------------------------------------------------------------------------------------------ |
 | `sentryOrg`          | The slug of the organization name in Sentry.                                                      | -                                                                                                            |
 | `sentryProject`      | The slug of the project name in Sentry.                                                           | -                                                                                                            |
 | `sentryAuthToken`    | Authentication token for Sentry. We recommend this be set as an environment variable (see below). | -                                                                                                            |
@@ -83,7 +83,7 @@ You can use [site environment variables](https://docs.netlify.com/configure-buil
 | `sourceMapUrlPrefix` | Prefix for the location of source maps.                                                           | `"~/"`                                                                                                       |
 | `skipSetCommits`     | Set this to true if you want to disable commit tracking.                                          | `false`                                                                                                      |
 | `skipSourceMaps`     | Set this to true if you want to disable sending source maps to Sentry.                            | `false`                                                                                                      |
+| `deleteSourceMaps`   | Set this to true if you want to delete sourcemaps after they have been sent to Sentry.            | `false`                                                                                                      |
 | `releasePrefix`      | Set this to prefix the release name with the value.                                               | -                                                                                                            |
 | `deployPreviews`     | Set this to false if you want to skip running the build plugin on deploy previews.                | `true`                                                                                                       |
-| `deleteSourceMaps` | Set this to true if you want to delete sourcemaps after they have been sent to Sentry.        | `false`                                                                                                      |
 
