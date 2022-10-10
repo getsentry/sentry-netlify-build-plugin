@@ -87,3 +87,8 @@ You can use [site environment variables](https://docs.netlify.com/configure-buil
 | `releasePrefix`      | Set this to prefix the release name with the value.                                               | -                                                                                                            |
 | `deployPreviews`     | Set this to false if you want to skip running the build plugin on deploy previews.                | `true`                                                                                                       |
 
+#### Delete Source Maps
+
+If you choose to enable `deleteSourceMaps` the sourcemap files will be deleted but a reference to the sourcemap will 
+remain in the obfuscated source code that is deployed.  This may produce a warning in the developer console indicating 
+that the `.map` files do not exist.   
