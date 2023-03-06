@@ -21,10 +21,10 @@ jobs:
         with:
           path: |
             **/node_modules
-          key: ${{ hashFiles('**/package-lock.json') }}
+          key: ${{ hashFiles('**/yarn.lock') }}
       - name: Install
         if: steps.cache-deps.outputs.cache-hit != 'true'
-        run: npm ci
+        run: yarn install
       - name: Pack
         run: npm pack
       - name: Upload Artifacts
