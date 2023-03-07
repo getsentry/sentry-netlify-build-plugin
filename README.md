@@ -122,6 +122,7 @@ For more information about the parameters below, please see the [Sentry release 
 | `skipSetCommits` | - | If true, disable commit tracking. | `false` |
 | `skipSourceMaps` | - | If true, disable uploading source maps to Sentry. | `false` |
 | `deployPreviews` | - | If false, skip running the build plugin on preview deploys. | `true` |
+| `deleteSourceMaps` | SENTRY_DELETE_SOURCEMAPS | If true, delete source maps after uploading them to Sentry. May cause browser console errors if not used alongside your build tool's equivalent of webpack's [`hidden-source-map` option](https://webpack.js.org/configuration/devtool/). | `false` |
 
 ## `@sentry/netlify-build-plugin` vs. `@netlify/sentry`
 
