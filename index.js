@@ -10,6 +10,7 @@ const path = require('path');
 const SentryCli = require('@sentry/cli');
 const { promisify, inspect } = require('util');
 const { version } = require('./package.json');
+const rimraf = require('rimraf');
 
 const writeFile = promisify(fs.writeFile);
 const deleteFile = promisify(fs.unlink);
@@ -37,6 +38,7 @@ module.exports = {
     const sentryRepository = process.env.SENTRY_REPOSITORY || inputs.sentryRepository;
     const sourceMapPath = inputs.sourceMapPath || PUBLISH_DIR;
     const sourceMapUrlPrefix = inputs.sourceMapUrlPrefix || DEFAULT_SOURCE_MAP_URL_PREFIX;
+    const shouldDeleteMaps = inputs.deleteSourceMaps || SENTRY_DELETE_SOURCEMAPS;
 
     if (RUNNING_IN_NETLIFY) {
       if (IS_PREVIEW && !inputs.deployPreviews) {
@@ -83,6 +85,13 @@ module.exports = {
       console.log();
 
       await deleteSentryConfig();
+
+      if (shouldDeleteMaps) {
+        console.log('Removing source map files.');
+        await rimraf(sourceMapPath, {
+          filter: filepath => filepath.endsWith('.map'),
+        });
+      }
     }
   },
 };
