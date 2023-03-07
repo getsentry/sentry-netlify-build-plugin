@@ -13,8 +13,8 @@
     "index.js",
     "manifest.yml",
     "package.json",
-    "package-lock.json",
-    "README.md"
+    "README.md",
+    "yarn.lock"
   ],
   "repository": "https://github.com/getsentry/sentry-netlify-build-plugin",
   "bugs": {

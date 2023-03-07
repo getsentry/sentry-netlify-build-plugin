@@ -14,15 +14,17 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
+        with:
+          node-version: 16
       - uses: actions/cache@v2
         id: cache-deps
         with:
           path: |
             **/node_modules
-          key: ${{ hashFiles('**/package-lock.json') }}
+          key: ${{ hashFiles('**/yarn.lock') }}
       - name: Install
         if: steps.cache-deps.outputs.cache-hit != 'true'
-        run: npm ci
+        run: yarn install
       - name: Pack
         run: npm pack
       - name: Upload Artifacts
