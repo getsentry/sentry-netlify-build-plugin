@@ -1,87 +1,132 @@
-# Sentry Netlify build plugin &nbsp;&nbsp;&nbsp;<a href="https://app.netlify.com/start/deploy?repository=https://github.com/getsentry/sentry-netlify-build-plugin"><img src="https://www.netlify.com/img/deploy/button.svg"></a>
+# Sentry Netlify Build Plugin
 
 Automatically upload source maps and notify [Sentry](https://sentry.io/) of new releases being deployed to your site after it finishes building in Netlify.
 
 The Sentry Netlify build plugin:
-* Notifies Sentry of new releases being deployed.
-* Uploads source maps to Sentry.
-* Sends Sentry the commit SHA of HEAD to enable commit features.
 
-Before proceeding, you'll first want to ensure that your Sentry project is set up properly to track commit metadata. The easiest way to do that is to [install a repository integration](https://docs.sentry.io/product/releases/#install-repo-integration).
+- Notifies Sentry of new releases being deployed.
+- Uploads source maps to Sentry.
+- Sends Sentry the commit SHA of HEAD to enable commit features.
 
-By default, the linked Sentry repository will be parsed from the Netlify's `REPOSITORY_URL` environment variable. This behaviour can be overridden using the `SENTRY_REPOSITORY` environment variable.
+_**Note:** This build plugin is separate from `@netlify/sentry`, which is a monitoring plugin built by Netlify. For more information, see [`@sentry/netlify-build-plugin` vs. `@netlify/sentry`](#sentrynetlify-build-plugin-vs-netlifysentry) below._
 
-Make sure build plugins are enabled on your site to see the plugin run.
+---
+
+- [Installation](#installation)
+  - [Prepare Your Sentry Organization](#prepare-your-sentry-organization)
+  - [Install the Plugin](#install-the-plugin)
+  - [Configure Your SDK](#configure-your-sdk)
+- [Configuration](#configuration)
+  - [UI Configuration](#ui-configuration)
+  - [Configuration Using Environment Variables](#configuration-using-environment-variables)
+  - [Configuration in `netlify.toml`](#configuration-in-netlifytoml)
+- [Options](#options)
+- [`@sentry/netlify-build-plugin` vs. `@netlify/sentry`](#sentrynetlify-build-plugin-vs-netlifysentry)
 
 ## Installation
-#### UI Installation
-To install plugins via the Netlify UI, go to your team sites list and select the Plugins tab (or follow this direct link to the [plugins directory](https://app.netlify.com/plugins)). Then find "Sentry Build Plugin" and click **Install**.
 
-UI installation is the recommended way to install this Build Plugin unless you need advanced configuration.
+### Prepare Your Sentry Organization
+
+Before proceeding, you'll first want to ensure that your Sentry project is set up properly to track commit metadata and allow uploading of source maps.
+
+First, if you haven't already, [install a repository integration](https://docs.sentry.io/product/releases/#install-repo-integration).
+
+Second, create an [internal integration in Sentry](https://docs.sentry.io/product/integrations/integration-platform/internal-integration), which will handle authentication for source map uploading.
+
+1. In Sentry, navigate to: _Settings > Developer Settings > New Internal Integration_.
+2. Give your new integration a name (for example, "Netlify Deploy Integration") and specify the necessary permissions. In this case, we need "Admin" access for "Release" and "Read" access for "Organization". You can leave all other fields blank.
+3. Click "Save Changes" at the bottom of the page.
+4. Once the integration has been created, it should take you to the "Edit Internal Integration" page for your integration. Scroll down to the "Tokens" section and copy your token, which you'll need when configuring the plugin.
+
+### Install the Plugin
+
+The plugin can be installed either through the Netlify UI or by adding configuration values to `netlify.toml`. Unless you need advanced configuration, we recommend using the UI.
+
+#### UI Installation
+
+To install the plugin via the Netlify UI, go to your team sites list and select the Integrations tab (or follow this direct link to the [Integrations directory](https://app.netlify.com/plugins)). Then search for "Sentry" and click **Enable** and then **Enable Release Management**.
 
 #### File-based Installation
-Alternatively, to install with file-based installation, add the following lines to your `netlify.toml` file:
+
+Alternatively, to use file-based installation, add the following lines to your `netlify.toml` file:
 
 ```toml
 [[plugins]]
   package = "@sentry/netlify-build-plugin"
 
   [plugins.inputs]
-    sentryOrg = ""
-    sentryProject = ""
+    sentryOrg = "your org slug"
+    sentryProject = "your project slug"
 ```
 
-Note: The `[[plugins]]` line is required for each plugin installed via file-based installation, even if you have other plugins in your `netlify.toml` file already.
+Note: The `[[plugins]]` line is required for each plugin installed via file-based installation, so you need to add it here even if you have other plugins in your `netlify.toml` file already.
 
-### Create a Sentry Internal Integration
-For Netlify to communicate securely with Sentry, you'll need to create a new internal integration. In Sentry, navigate to: *Settings > Developer Settings > New Internal Integration*.
+### Configure Your SDK
 
-Give your new integration a name (for example, “Netlify Deploy Integration”) and specify the necessary permissions. In this case, we need Admin access for “Release” and Read access for “Organization”.
+To link errors with releases, you must include a release ID (a.k.a version) where you configure your client SDK. For more information, read our documentation on [configuring your SDK for releases](https://docs.sentry.io/workflow/releases/?platform=node#configure-sdk).
 
-![View of internal integration permissions.](images/internal-integration-permissions.png)
+## Configuration
 
-Click “Save” at the bottom of the page and grab your token, which you’ll need this in the next step.
+The Sentry build plugin can be configured in the Netlify UI, by setting environment variables, or by adding options to `netlify.toml`.
 
+### UI Configuration
 
-### Set Environment Variables in Netlify
-Save the internal integration token and any other environment variables as [site environment variables](https://docs.netlify.com/configure-builds/environment-variables/):
+Basic configuration can be done in the Netlify UI. In the same Integrations tab where you [installed the plugin](#ui-installation), find the Sentry plugin again, click "View," and you should now see a configuration panel where you can set your auth token (from the internal integration [created above](#prepare-your-sentry-organization)) along with your organization and project slugs.
+
+Doing this will automatically set the `SENTRY_AUTH_TOKEN`, `SENTRY_ORG`, and `SENTRY_PROJECT` environment variables in Netlify.
+
+### Configuration Using Environment Variables
+
+The plugin can be configured using [site environment variables](https://docs.netlify.com/configure-builds/environment-variables/) in Netlify:
+
 1. In Netlify, go to your site's settings.
-2. Click on "Build & deploy".
-3. Click “Edit variables” and add `SENTRY_AUTH_TOKEN`, `SENTRY_ORG`, and `SENTRY_PROJECT` with their respective values. For more configuration options see the [environment variables](#environment-variables) section below.
-4. Click "Save".
+2. Click on "Environment Variables".
+3. Add `SENTRY_AUTH_TOKEN`, `SENTRY_ORG`, and `SENTRY_PROJECT` with their respective values. (The auth token comes from the internal integration [created above](#prepare-your-sentry-organization).)
 
-![View of internal integration permissions.](images/netlify-environment-variables.png)
+For more configuration options see the [Options](#options) section below.
+
+### Configuration in `netlify.toml`
+
+You organization and project slugs can be specified in `netlify.toml` in the `plugins.inputs` section:
+
+```toml
+[[plugins]]
+  package = "@sentry/netlify-build-plugin"
+
+  [plugins.inputs]
+    sentryOrg = "your org slug"
+    sentryProject = "your project slug"
+```
+
+We recommend against setting your auth token in `netlify.toml`, to avoid committing it to your repo.
+
+For more configuration options see the [Options](#options) section below.
+
+## Options
+
+In most cases, auth token, org slug, and project slug are all that's needed to use the plugin. For more advanced use cases, configuration can be done either by setting [site environment variables](https://docs.netlify.com/configure-builds/environment-variables/) or by adding to `netlify.toml`. Most options can be set either way.
 
 For more information about the parameters below, please see the [Sentry release management docs](https://docs.sentry.io/cli/releases/).
 
-### Ensure Your SDK is Configured
-To link errors with releases, you must include a release ID (a.k.a version) where you configure your client SDK. For more information, read our documentation on [configuring your SDK for releases](https://docs.sentry.io/workflow/releases/?platform=node#configure-sdk).
+| `netlify.toml` | Environment Variable | Description | Default |
+| --- | --- | --- | --- |
+| `sentryOrg` | `SENTRY_ORG` | Slug of the organization in Sentry. | - |
+| `sentryProject` | `SENTRY_PROJECT` | Slug of the project in Sentry | - |
+| `sentryAuthToken` | `SENTRY_AUTH_TOKEN` | Authentication token for Sentry. We recommend this be set as an environment variable, to avoid committing it to your repo. | - |
+| `sentryRelease` | `SENTRY_RELEASE` | Release ID (a.k.a version) | [COMMIT_REF](https://docs.netlify.com/configure-builds/environment-variables/#git-metadata) env variable, automatically set by Netlify |
+| `sentryRepository` | `SENTRY_REPOSITORY` | Name of the repository linked to your Sentry repository integration, in the form `org-name/repo-name` | Derived from [REPOSITORY_URL](https://docs.netlify.com/configure-builds/environment-variables/#git-metadata) env variable, automatically set by Netlify |
+| `releasePrefix` | `SENTRY_RELEASE_PREFIX` | Prefix to add to the release name | - |
+| - | `SENTRY_ENVIRONMENT` | Name of the environment being deployed to | Netlify [deploy context](https://docs.netlify.com/site-deploys/overview/#deploy-contexts) |
+| `sourceMapPath` | - | Folder to scan for source maps to upload | Netlify publish directory |
+| `sourceMapUrlPrefix` | - | Prefix for uploaded source map filenames (see [sentry-cli docs](https://docs.sentry.io/product/cli/releases/#sentry-cli-sourcemaps)) | `"~/"` |
+| `skipSetCommits` | - | If true, disable commit tracking. | `false` |
+| `skipSourceMaps` | - | If true, disable uploading source maps to Sentry. | `false` |
+| `deployPreviews` | - | If false, skip running the build plugin on preview deploys. | `true` |
 
-#### Environment Variables
+## `@sentry/netlify-build-plugin` vs. `@netlify/sentry`
 
-You can use [site environment variables](https://docs.netlify.com/configure-builds/environment-variables/) to configure these values:
-| name                    | description                                         | default                                                                                     |
-| ----------------------- | --------------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| `SENTRY_AUTH_TOKEN`     | Authentication token for Sentry.                    | -                                                                                           |
-| `SENTRY_ORG`            | The slug of the organization name in Sentry.        | -                                                                                           |
-| `SENTRY_PROJECT`        | The slug of the project name in Sentry.             | -                                                                                           |
-| `SENTRY_RELEASE`        | The release ID (a.k.a version).                     | [COMMIT_REF](https://docs.netlify.com/configure-builds/environment-variables/#git-metadata) |
-| `SENTRY_REPOSITORY`     | The name of the target Sentry repository.           | -                                                                                           |
-| `SENTRY_ENVIRONMENT`    | The name of the environment being deployed to.      | Netlify [deploy context](https://docs.netlify.com/site-deploys/overview/#deploy-contexts)   |
-| `SENTRY_RELEASE_PREFIX` | Set this to prefix the release name with the value. | -                                                                                           |
+Both Sentry and Netlify have created plugins which integrate the two services. The Sentry plugin (the one whose docs you're reading right now) is a build plugin, which handles release management and source map uploading. The Netlify plugin, is a monitoring plugin, which adds Sentry to Netlify functions. Docs for that plugin can be found [here](https://docs.netlify.com/netlify-labs/experimental-features/sentry-integration/).
 
+The two plugins can be enabled separately or together, depending on your installation method. In the Netlify UI, they are enabled together, in the Integrations tab, and there you will see settings for both. If enabled through `netlify.toml`, they must be enabled separately, with a `[[plugins]]` section added for each.
 
-#### Plugin Inputs
-| name                 | description                                                                                       | default                                                                                                      |
-| -------------------- | ------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| `sentryOrg`          | The slug of the organization name in Sentry.                                                      | -                                                                                                            |
-| `sentryProject`      | The slug of the project name in Sentry.                                                           | -                                                                                                            |
-| `sentryAuthToken`    | Authentication token for Sentry. We recommend this be set as an environment variable (see below). | -                                                                                                            |
-| `sentryRelease`      | The release ID (a.k.a version).                                                                   | [COMMIT_REF](https://docs.netlify.com/configure-builds/environment-variables/#git-metadata)                  |
-| `sentryRepository`   | The name of the target Sentry repository.                                                         | Derived from [REPOSITORY_URL](https://docs.netlify.com/configure-builds/environment-variables/#git-metadata) |
-| `sourceMapPath`      | Folder in which to scan for source maps to upload.                                                | Netlify publish directory                                                                                    |
-| `sourceMapUrlPrefix` | Prefix for the location of source maps.                                                           | `"~/"`                                                                                                       |
-| `skipSetCommits`     | Set this to true if you want to disable commit tracking.                                          | `false`                                                                                                      |
-| `skipSourceMaps`     | Set this to true if you want to disable sending source maps to Sentry.                            | `false`                                                                                                      |
-| `releasePrefix`      | Set this to prefix the release name with the value.                                               | -                                                                                                            |
-| `deployPreviews`     | Set this to false if you want to skip running the build plugin on deploy previews.                | `true`                                                                                                       |
+Note that in the Netlify UI, the Sentry plugin has a `Beta` label. This applies to only to the Netlify-built plugin, not this one.
