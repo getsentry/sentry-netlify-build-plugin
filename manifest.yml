@@ -1,29 +1,29 @@
 name: sentry-netlify-build-plugin
 inputs:
   - name: sentryOrg
-    description: The slug of the organization name in Sentry
+    description: Slug of the organization in Sentry.
   - name: sentryProject
-    description: The slug of the project name in Sentry
+    description: Slug of the project in Sentry.
   - name: sentryAuthToken
-    description: Authentication token for Sentry
+    description: Authentication token for Sentry. We recommend this be set as an environment variable instead, to avoid committing it to your repo.
   - name: sentryRelease
-    description: The release ID (a.k.a version)
+    description: Release ID (a.k.a version).
   - name: sentryRepository
-    description: The name of the target Sentry repository
+    description: Name of the repository linked to your Sentry repository integration, in the form `org-name/repo-name`.
+  - name: releasePrefix
+    description: Prefix to add to the release name.
   - name: sourceMapPath
-    description: Folder in which to scan for source maps to upload
+    description: Folder to scan for source maps to upload.
   - name: sourceMapUrlPrefix
-    description: Optional prefix for the location of source maps
+    description: Prefix for uploaded source map filenames (see https://docs.sentry.io/product/cli/releases/#sentry-cli-sourcemaps).
   - name: skipSetCommits
-    description: Set this to true if you want to disable commit tracking
+    description: If true, disable commit tracking.
     default: False
   - name: skipSourceMaps
-    description: Set this to true if you want to disable sending source maps to Sentry
+    description: If true, disable uploading source maps to Sentry.
     default: False
-  - name: releasePrefix
-    description: Set this to prefix the release name with the value.
   - name: deployPreviews
-    description: Set this to false if you want to skip running the build plugin on deploy previews.
+    description: If false, skip running the build plugin on preview deploys.
     default: True
   - name: deleteSourceMaps
     description: If true, delete source maps after uploading them to Sentry.
