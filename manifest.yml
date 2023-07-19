@@ -28,3 +28,6 @@ inputs:
   - name: deleteSourceMaps
     description: If true, delete source maps after uploading them to Sentry.
     default: False
+  - name: enableLocal
+    description: Create a Sentry release for local builds.
+    default: False
