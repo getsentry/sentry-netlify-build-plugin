@@ -38,7 +38,7 @@ module.exports = {
     const sentryRepository = process.env.SENTRY_REPOSITORY || inputs.sentryRepository;
     const sourceMapPath = inputs.sourceMapPath || PUBLISH_DIR;
     const sourceMapUrlPrefix = inputs.sourceMapUrlPrefix || DEFAULT_SOURCE_MAP_URL_PREFIX;
-    const shouldDeleteMaps = inputs.deleteSourceMaps || SENTRY_DELETE_SOURCEMAPS;
+    const shouldDeleteMaps = process.env.SENTRY_DELETE_SOURCEMAPS || inputs.deleteSourceMaps;
 
     if (RUNNING_IN_NETLIFY) {
       if (IS_PREVIEW && !inputs.deployPreviews) {
