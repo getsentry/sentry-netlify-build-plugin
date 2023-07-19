@@ -39,8 +39,9 @@ module.exports = {
     const sourceMapPath = inputs.sourceMapPath || PUBLISH_DIR;
     const sourceMapUrlPrefix = inputs.sourceMapUrlPrefix || DEFAULT_SOURCE_MAP_URL_PREFIX;
     const shouldDeleteMaps = inputs.deleteSourceMaps || SENTRY_DELETE_SOURCEMAPS;
+    const enableLocal = process.env.SENTRY_LOCAL || inputs.enableLocal;
 
-    if (RUNNING_IN_NETLIFY) {
+    if (RUNNING_IN_NETLIFY || enableLocal) {
       if (IS_PREVIEW && !inputs.deployPreviews) {
         console.log('Skipping Sentry release creation - Deploy Preview');
         return;
