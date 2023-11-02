@@ -10,7 +10,7 @@ const path = require('path');
 const SentryCli = require('@sentry/cli');
 const { promisify, inspect } = require('util');
 const { version } = require('./package.json');
-const rimraf = require('rimraf');
+const {rimraf} = require('rimraf');
 
 const writeFile = promisify(fs.writeFile);
 const deleteFile = promisify(fs.unlink);
