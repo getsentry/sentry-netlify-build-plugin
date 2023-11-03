@@ -10,7 +10,8 @@ const path = require('path');
 const SentryCli = require('@sentry/cli');
 const { promisify, inspect } = require('util');
 const { version } = require('./package.json');
-const {rimraf} = require('rimraf');
+const exec = promisify(require('child_process').exec);
+
 
 const writeFile = promisify(fs.writeFile);
 const deleteFile = promisify(fs.unlink);
@@ -88,9 +89,11 @@ module.exports = {
 
       if (shouldDeleteMaps) {
         console.log('Removing source map files.');
-        await rimraf(sourceMapPath, {
+        // remove trailing slash if any
+        await exec(`rm -f ${sourceMapPath.replace(/\/$/, "")}/**/*.map*`);
+        /* await rimraf(sourceMapPath, {
           filter: filepath => filepath.endsWith('.map'),
-        });
+        }); */
       }
     }
   },
