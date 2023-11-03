@@ -22,8 +22,7 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "@sentry/cli": "^1.52.3",
-    "rimraf": "^5.0.5"
+    "@sentry/cli": "^1.52.3"
   },
   "engines": {
     "node": ">=8.12.0"
